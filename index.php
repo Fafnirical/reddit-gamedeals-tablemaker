@@ -1,9 +1,19 @@
-<?php
+<?php //display area for input, w/ text area
+?>
+<html>
+	<body>
+		<form method='post'>
+			<input type="text" placeholder="URL here" name="URL" onfocus="javascript:if(this.placeholder=='URL here'){this.placeholder='';}" onblur="javascript:if(this.placeholder==''){this.placeholder='URL here';}" />
+			<input type="submit" value="Convert to Reddit table format" name="submit" />
+	</form>
+<?php //get URL on "SUBMIT" button
+	if(isset($_POST['URL']) && !empty($_POST['URL'])) {
+		$url = $_POST['URL']; //urldecode???
+		print('$url: '.$url);
+	}
+?>
 
-//display area for input, w/ text area
-//get URL on "SUBMIT" button
-
-//function checks URL schema (NOTE: disable for initial testing purposes)
+<?php //function checks URL schema (NOTE: disable for initial testing purposes)
  /* if domain is Playfire.com
 
   * function gets data from: div.columns-fauxcolumns div.columns-inner div.column-center-outer div.column-center-inner div#main.main.section div.widget.Blog div.blog-posts.hfeed div.date-outer div.date-posts div.post-outer div.post-hentry div.post-body.entry-content ul
@@ -24,3 +34,6 @@
 //function takes parsed data and puts it into Reddit table format
 
 //display parsed data in non-editable text area underneath "SUBMIT" button
+?>
+	</body>
+</html>
