@@ -10,14 +10,15 @@
 	if(isset($_POST['URL']) && !empty($_POST['URL'])) {
 		$url = $_POST['URL'];
 		print('$url: '.$url."<br>");
-		validateURL($url);
+		validate_url($url);
+		print_r(parse_url($url)); print "<br>";
+		get_schema($url);
 	}
 ?>
 <?php //validate URL
-	function validateURL($url) {
+	function validate_url($url) {
 		if(!filter_var($url, FILTER_VALIDATE_URL)) {
-			print("Error 400: Bad Request. (Please enter a valid URL.)<br>");
-			exit();
+			exit("Error 400: Bad Request. (Please enter a valid URL.)");
 		}
 		else {
 			print("URL is valid, continuing...<br>");
@@ -26,7 +27,15 @@
 ?>
 
 <?php //function checks URL schema (NOTE: disable for initial testing purposes)
+	function get_schema($url) {
+		$url_parsed = parse_url($url);
+		switch(strtolower($url_parsed["host"])) {
+			case "blog.playfire.com":
+				echo "playfire!";
+		}
+	}
  /* if domain is Playfire.com
+ 
 
   * function gets data from: div.columns-fauxcolumns div.columns-inner div.column-center-outer div.column-center-inner div#main.main.section div.widget.Blog div.blog-posts.hfeed div.date-outer div.date-posts div.post-outer div.post-hentry div.post-body.entry-content ul
   * (NOTE: disable for initial testing purposes)
