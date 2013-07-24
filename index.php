@@ -2,14 +2,26 @@
 ?>
 <html>
 	<body>
-		<form method='post'>
+		<form method='post' maxlength="150">
 			<input type="text" placeholder="URL here" name="URL" onfocus="javascript:if(this.placeholder=='URL here'){this.placeholder='';}" onblur="javascript:if(this.placeholder==''){this.placeholder='URL here';}" />
 			<input type="submit" value="Convert to Reddit table format" name="submit" />
 	</form>
 <?php //get URL on "SUBMIT" button
 	if(isset($_POST['URL']) && !empty($_POST['URL'])) {
-		$url = $_POST['URL']; //urldecode???
-		print('$url: '.$url);
+		$url = $_POST['URL'];
+		print('$url: '.$url."<br>");
+		validateURL($url);
+	}
+?>
+<?php //validate URL
+	function validateURL($url) {
+		if(!filter_var($url, FILTER_VALIDATE_URL)) {
+			print("Error 400: Bad Request. (Please enter a valid URL.)<br>");
+			exit();
+		}
+		else {
+			print("URL is valid, continuing...<br>");
+		}
 	}
 ?>
 
