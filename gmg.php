@@ -45,20 +45,24 @@
 			$table[$key] .= $game['price'].'|';
 			$table[$key] .= 'x.xx€'.'|';
 			$table[$key] .= '£x.xx'.'|';
-			$table[$key] .= '[';
+			if($game['metascore'] == 'N/A') {
+				$table[$key] .= 'N/A';
+			} else {
+				$table[$key] .= '[';
 				foreach($game['metascore']['critic'] as $c=>$criticscore) {
-				$table[$key] .= $criticscore;
-				if(count($game['metascore']['critic'])>$c+1) {
-					$table[$key] .= '/';
+					$table[$key] .= $criticscore;
+					if(count($game['metascore']['critic'])>$c+1) {
+						$table[$key] .= '/';
+					}
 				}
-			}
-			$table[$key] .= ']('.$game['metascore']['url'].')';
-			if($game['metascore']['noagg'] == TRUE) {
-				$table[$key] .= ' \(only '.count($game['metascore']['critic']);
-				if(count($game['metascore']['critic']) == 1) {
-					$table[$key] .= ' review\)';
-				} else {
-					$table[$key] .= ' reviews\)';
+				$table[$key] .= ']('.$game['metascore']['url'].')';
+				if($game['metascore']['noagg'] == TRUE) {
+					$table[$key] .= ' \(only '.count($game['metascore']['critic']);
+					if(count($game['metascore']['critic']) == 1) {
+						$table[$key] .= ' review\)';
+					} else {
+						$table[$key] .= ' reviews\)';
+					}
 				}
 			}
 			$table[$key] .= '|';
