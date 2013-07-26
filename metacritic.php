@@ -4,7 +4,8 @@
   * if >=4 critic reviews: return overall
   * return overall user score
   */
-	function get_meta($game) {
+	function get_meta($game)
+	{
 		$game_mc = urlencode($game);
 		$metacritic['url'] = metaURL_fromgoogle($game_mc);
 		$metacritic['noagg'] = FALSE;
@@ -37,16 +38,20 @@
 		}
 		*/
 
+		$html->clear();
+		unset($html);
+
 		return($metacritic);
 	}
 ?>
 
 <?php //Google function for Metacritic
-	function metaURL_fromgoogle($game) {
+	function metaURL_fromgoogle($game)
+	{
 		// The request also includes the userip parameter which provides the end
 		// user's IP address. Doing so will help distinguish this legitimate
 		// server-side traffic from traffic which doesn't come from an end-user.
-		$url = "http://ajax.googleapis.com/ajax/services/search/web?v=1.0&q=".$game."+site%3Ametacritic.com%2Fgame%2Fpc+&userip=68.33.103.129";//.getUserIpAddr();
+		$url = "http://ajax.googleapis.com/ajax/services/search/web?v=1.0&q=".$game."+site%3Ametacritic.com%2Fgame%2Fpc+&userip=".getUserIpAddr();
 		//print $url."<br>";
 		// sendRequest
 		// note how referer is set manually

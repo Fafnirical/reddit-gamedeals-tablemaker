@@ -15,7 +15,6 @@
 		$url = $_POST['URL'];
 		print('$url: '.$url.'<br>');
 		validate_url($url);
-		print_r(parse_url($url)); print '<br>';
 		
 		//get the game info
 		$games = get_info($url);
@@ -44,53 +43,23 @@
 	}
 ?>
 
-<?php //function checks URL schema (NOTE: disable for initial testing purposes)
+<?php //function gets game info
 	function get_info($url) {
-		$url_parsed = parse_url($url);
+		$parse = parse_url($url);
+		$url_parsed = preg_replace('#^(http(s)?://)?w{3}\.(\w+\.\w+)#', '$3', $parse);
+		print_r($url_parsed); print '<br>';
 		switch(strtolower($url_parsed['host'])) {
 			case "blog.playfire.com":
 				include 'gmg.php';
+				break;
+			case "humblebundle.com":
+				include 'hib.php';
+				break;
 		}
 		$games = get_games($url);
 		foreach($games as $key=>$game) {
 			$games[$key]['metascore'] = get_meta($game['name']);
 		}
 		return $games;
-	}
-?>
-
-<?php //function takes parsed data and puts it into Reddit table format
-	function make_table($games) {
-		$table[0] = 'Title|Disc.|$USD|EUR€|£GBP|Metacritic|Platform|DRM';
-		$table[1] = ':----|----:|---:|---:|---:|---------:|:------:|:-:';
-		foreach($games as $key=>$game) {
-			$key += 2;
-			$table[$key] = "[".$game['name'].']('.$game['url'].')'.'|';
-			$table[$key] .= $game['percent'].'|';
-			$table[$key] .= $game['price'].'|';
-			$table[$key] .= 'x.xx€'.'|';
-			$table[$key] .= '£x.xx'.'|';
-			$table[$key] .= '[';
-			foreach($game['metascore']['critic'] as $c=>$criticscore) {
-				$table[$key] .= $criticscore;
-				if(count($game['metascore']['critic'])>$c+1) {
-					$table[$key] .= '/';
-				}
-			}
-			$table[$key] .= ']('.$game['metascore']['url'].') ';
-			if($game['metascore']['noagg'] == TRUE) {
-				$table[$key] .= '\(only '.count($game['metascore']['critic']);
-				if(count($game['metascore']['critic']) == 1) {
-					$table[$key] .= ' review\)';
-				} else {
-					$table[$key] .= ' reviews\)';
-				}
-			}
-			$table[$key] .= '|';
-			//userscore
-			$table[$key] .= "  ".'|'; //platform not yet implemented
-			$table[$key] .= $game['drm'];
-		}
-		return $table;
 	}
 ?>
