@@ -14,6 +14,7 @@
 			$metacritic['noagg'] = FALSE;
 			$html = file_get_html($metacritic['url']);
 
+			//metascore
 			if($ms=$html->find('div.metascore span.score_value')) {
 				foreach($ms as $criticscore) {
 					$metacritic['critic'][0] = trim($criticscore->plaintext);
@@ -27,7 +28,7 @@
 				$metacritic['critic'][0] = "N/A";
 			}
 
-			/*
+			/* //userscore
 			foreach($html->find('div.avguserscore') as $score) {
 				if($us=$score->find('span.score_value')) {
 					foreach($us as $userscore) {
@@ -56,7 +57,6 @@
 		// user's IP address. Doing so will help distinguish this legitimate
 		// server-side traffic from traffic which doesn't come from an end-user.
 		$url = 'http://ajax.googleapis.com/ajax/services/search/web?v=1.0&q="'.$game.'"+site%3Ametacritic.com%2Fgame%2Fpc+&userip='.getUserIpAddr();
-		//print $url."<br>";
 		// sendRequest
 		// note how referer is set manually
 		$ch = curl_init();
@@ -68,7 +68,7 @@
 
 		// now, process the JSON string
 		$json = json_decode($body);
-		if(!isset($json->respsonseData->results[0]) || !empty($json->responseData->results[0])) {
+		if(!empty($json->responseData->results[0])) {
 			return($json->responseData->results[0]->url);
 		} else {
 			return 'N/A';

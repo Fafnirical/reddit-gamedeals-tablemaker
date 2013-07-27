@@ -6,27 +6,46 @@
 			foreach($li->find('a') as $link) {
 				$games[$key]['name'] = $link->plaintext;
 				$games[$key]['url'] = $link->href;
-				$game_html = file_get_html($link->href);
-				foreach($game_html->find('strong.curPrice') as $price) {
-					$games[$key]['price'] = $price->plaintext;
-					break;
-				}
-				foreach($game_html->find('section.description h2 span') as $drm) {
-					if(trim($drm->plaintext) == 'Third party DRM: Steam') {
-						$games[$key]['drm'] = 'Steam';
-						break;
-					} else if(trim($drm->plaintext) == 'Third party DRM: Origin') {
-					$games[$key]['drm'] = 'Origin';
-						break;
-					} else {
-						$games[$key]['drm'] = ''; //other or 'Capsule'
+				if(!in_array('HTTP/1.1 404 NOT FOUND', get_headers($link->href))) {
+					$game_html = file_get_html($link->href);
+					foreach($game_html->find('strong.curPrice') as $price) {
+						$games[$key]['price'] = $price->plaintext;
 						break;
 					}
+					if($game_html->find('span.lt')) {
+						foreach($game_html->find('span.lt') as $price) {
+							$games[$key]['norm_price'] = $price->plaintext;
+							break;
+						}
+					} else {
+						$games[$key]['norm_price'] = $games[$key]['price'];
+					}
+					$games[$key]['price-num'] = preg_replace('/[\$,]/', '', $games[$key]['price']);
+					$games[$key]['norm_price-num'] = preg_replace('/[\$,]/', '', $games[$key]['norm_price']);
+					foreach($game_html->find('section.description h2 span') as $drm) {
+						if(trim($drm->plaintext) == 'Third party DRM: Steam') {
+							$games[$key]['drm'] = 'Steam';
+							break;
+						} else if(trim($drm->plaintext) == 'Third party DRM: Origin') {
+						$games[$key]['drm'] = 'Origin';
+							break;
+						} else {
+							$games[$key]['drm'] = ' '; //other or 'Capsule'
+							break;
+						}
+					}
+					break;
+				} else {
+					$games[$key]['price'] = 'N/A';
+					$games[$key]['norm_price'] = 'N/A';
+					$games[$key]['drm'] = 'N/A';
 				}
-				break;
 			}
-			preg_match('/[1-9][0-9]%/', $li->plaintext, $matches);
-			$games[$key]['percent'] = $matches[0];
+			if($games[$key]['price'] == 'N/A') {
+				$games[$key]['percent'] = 'N/A';
+			} else {
+				$games[$key]['percent'] = (int)(($games[$key]['norm_price-num']-$games[$key]['price-num'])/($games[$key]['norm_price-num'])*100).'%';
+			}
 			$games[$key]['platform'] = ' ';
 		}
 		$html->clear();
@@ -67,7 +86,7 @@
 			}
 			$table[$key] .= '|';
 			//userscore
-			$table[$key] .= $game['platform'].'|'; //GMG platform not yet implemented
+			$table[$key] .= $game['platform'].'|'; //GMG platforms not yet implemented (too many exceptions)
 			$table[$key] .= $game['drm'];
 		}
 		return $table;
